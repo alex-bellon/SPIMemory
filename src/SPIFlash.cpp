@@ -458,13 +458,15 @@ bool SPIFlash::readStr(uint32_t _addr, String &data, bool fastRead) {
 //    3. errorCheck --> Turned on by default. Checks for writing errors
 // WARNING: You can only write to previously erased memory locations (see datasheet).
 // Use the eraseSector()/eraseBlock32K/eraseBlock64K commands to first clear memory (write 0xFFs)
-bool SPIFlash::writeByte(uint32_t _addr, uint8_t data, bool errorCheck) {
+int SPIFlash::writeByte(uint32_t _addr, uint8_t data, bool errorCheck) {
   //return _write(_addr, data, sizeof(data), errorCheck, _BYTE_);
   #ifdef RUNDIAGNOSTIC
     _spifuncruntime = micros();
   #endif
+
+  // TODO balex: revert return values back to true/false
   if(!_prep(PAGEPROG, _addr, sizeof(data))) {
-    return false;
+    return 1; // this is where it's erroring out
   }
 
   _beginSPI(PAGEPROG);
@@ -476,11 +478,11 @@ bool SPIFlash::writeByte(uint32_t _addr, uint8_t data, bool errorCheck) {
     #ifdef RUNDIAGNOSTIC
       _spifuncruntime = micros() - _spifuncruntime;
     #endif
-    return true;
+    return 2;
   }
   else {
     if (!_notBusy()) {
-      return false;
+      return 3;
     }
     _currentAddress = _addr;
     CHIP_SELECT
@@ -491,17 +493,17 @@ bool SPIFlash::writeByte(uint32_t _addr, uint8_t data, bool errorCheck) {
       #ifdef RUNDIAGNOSTIC
         _spifuncruntime = micros() - _spifuncruntime;
       #endif
-      return false;
+      return 4;
     }
     else {
       _endSPI();
       #ifdef RUNDIAGNOSTIC
         _spifuncruntime = micros() - _spifuncruntime;
       #endif
-      return true;
+      return 5;
     }
   }
-  return true;
+  return 6;
 }
 
 // Writes a char of data to a specific location in a page.

@@ -165,6 +165,8 @@
      #if defined ENABLEZERODMA
        dma_init();
      #endif
+   #elif defined(__asr650x__)
+    // TODO balex: do we need to add stuff for asr650x here?
    #else
      #if defined (ARDUINO_ARCH_AVR)
        //save current SPI settings
@@ -252,6 +254,8 @@
  uint16_t SPIFlash::_nextInt(uint16_t data) {
  #if defined (ARDUINO_ARCH_SAMD)
    return _spi->transfer16(data);
+ #elif defined(__asr650x__)
+   return SPI.transfer(data);
  #else
    return SPI.transfer16(data);
  #endif

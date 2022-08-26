@@ -196,6 +196,8 @@
  uint16_t SPIFram::_nextInt(uint16_t data) {
  #if defined (ARDUINO_ARCH_SAMD)
    return _spi->transfer16(data);
+ #elif defined (__asr650x__)
+   return SPI.transfer(data);
  #else
    return SPI.transfer16(data);
  #endif
