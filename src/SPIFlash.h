@@ -37,6 +37,8 @@ public:
   SPIFlash(uint8_t cs = CS, SPIClass *spiinterface=&SPI);
   #elif defined (BOARD_RTL8195A)
   SPIFlash(PinName cs = CS);
+  #elif defined (__asr650x__)
+  SPIFlash(uint8_t cs = CS);
   #else
   SPIFlash(uint8_t cs = CS);
   SPIFlash(int8_t *SPIPinsArray);
@@ -60,7 +62,7 @@ public:
   uint32_t getMaxPage(void);
   float    functionRunTime(void);
   //-------------------------------- Write / Read Bytes ---------------------------------//
-  int     writeByte(uint32_t _addr, uint8_t data, bool errorCheck = true);
+  bool     writeByte(uint32_t _addr, uint8_t data, bool errorCheck = true);
   uint8_t  readByte(uint32_t _addr, bool fastRead = false);
   //----------------------------- Write / Read Byte Arrays ------------------------------//
   bool     writeByteArray(uint32_t _addr, uint8_t *data_buffer, size_t bufferSize, bool errorCheck = true);

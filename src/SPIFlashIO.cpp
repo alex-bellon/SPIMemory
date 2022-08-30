@@ -107,6 +107,7 @@
      //Serial.println(_addr);
      #ifndef HIGHSPEED
        if(_isChipPoweredDown() || !_addressCheck(_addr, size) || !_notPrevWritten(_addr, size) || !_notBusy() || !_writeEnable()) {
+         // TODO balex: failing here 
          return false;
        }
      #else
@@ -166,7 +167,13 @@
        dma_init();
      #endif
    #elif defined(__asr650x__)
-    // TODO balex: do we need to add stuff for asr650x here?
+     #ifdef SPI_HAS_TRANSACTION
+       SPI.beginTransaction(_settings);
+     #else
+       SPI.setClockDivider(_clockdiv);
+       SPI.setDataMode(SPI_MODE0);
+       SPI.setBitOrder(MSBFIRST);
+     #endif
    #else
      #if defined (ARDUINO_ARCH_AVR)
        //save current SPI settings
@@ -541,6 +548,7 @@
 
    _getJedecId();
 
+
    for (uint8_t i = 0; i < sizeof(_supportedManID); i++) {
      if (_chip.manufacturerID == _supportedManID[i]) {
        _chip.supportedMan = true;
@@ -603,11 +611,12 @@
        #endif
        return true;
      }
+     /**
      else {
        _troubleshoot(UNKNOWNCHIP); //Error code for unidentified capacity
        return false;
      }
-
+     **/
    }
 
    if (!_chip.capacity) {

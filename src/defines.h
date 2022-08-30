@@ -48,11 +48,12 @@
    #define xfer(n)   _spi->transfer(n)
    #define BEGIN_SPI _spi->begin();
 
-#elif defined (__asr650x__)
-   #define CHIP_SELECT  digitalWrite(csPin, LOW);
+ #elif defined (__asr650x__)
+   #define CHIP_SELECT   digitalWrite(csPin, LOW);
    #define CHIP_DESELECT digitalWrite(csPin, HIGH);
    #define xfer(n) SPI.transfer(n);
-   #define BEGIN_SPI SPI.begin(34, 33, 32, 35);
+   //#define BEGIN_SPI SPI.begin(34, 33, 32, 35);
+   #define BEGIN_SPI SPI.begin();
 
  // Defines and variables not specific to any architecture
  #else

@@ -50,6 +50,14 @@ SPIFlash::SPIFlash(uint8_t cs, SPIClass *spiinterface) {
   CHIP_DESELECT
 }
 
+#elif defined (__asr650x__)
+SPIFlash::SPIFlash(uint8_t cs) {
+  _SPIInUse = STDSPI;
+  csPin = cs;
+  pinMode(csPin, OUTPUT);
+  CHIP_DESELECT
+}
+
 #elif defined (BOARD_RTL8195A)
 SPIFlash::SPIFlash(PinName cs) {
   _SPIInUse = STDSPI;
@@ -129,6 +137,7 @@ bool SPIFlash::begin(uint32_t flashChipSize) {
 #else
   if (!_clockdiv) {
     _clockdiv = SPI_CLOCK_DIV2;
+    // TODO balex: relevant?
   }
 #endif
   bool retVal = _chipID(flashChipSize);
@@ -458,15 +467,14 @@ bool SPIFlash::readStr(uint32_t _addr, String &data, bool fastRead) {
 //    3. errorCheck --> Turned on by default. Checks for writing errors
 // WARNING: You can only write to previously erased memory locations (see datasheet).
 // Use the eraseSector()/eraseBlock32K/eraseBlock64K commands to first clear memory (write 0xFFs)
-int SPIFlash::writeByte(uint32_t _addr, uint8_t data, bool errorCheck) {
+bool SPIFlash::writeByte(uint32_t _addr, uint8_t data, bool errorCheck) {
   //return _write(_addr, data, sizeof(data), errorCheck, _BYTE_);
   #ifdef RUNDIAGNOSTIC
     _spifuncruntime = micros();
   #endif
 
-  // TODO balex: revert return values back to true/false
-  if(!_prep(PAGEPROG, _addr, sizeof(data))) {
-    return 1; // this is where it's erroring out
+  if(!_prep(PAGEPROG, _addr, sizeof(data))) { // TODO balex: this is what is failing
+    return false;
   }
 
   _beginSPI(PAGEPROG);
@@ -478,11 +486,11 @@ int SPIFlash::writeByte(uint32_t _addr, uint8_t data, bool errorCheck) {
     #ifdef RUNDIAGNOSTIC
       _spifuncruntime = micros() - _spifuncruntime;
     #endif
-    return 2;
+    return true;
   }
   else {
     if (!_notBusy()) {
-      return 3;
+      return false;
     }
     _currentAddress = _addr;
     CHIP_SELECT
@@ -493,17 +501,17 @@ int SPIFlash::writeByte(uint32_t _addr, uint8_t data, bool errorCheck) {
       #ifdef RUNDIAGNOSTIC
         _spifuncruntime = micros() - _spifuncruntime;
       #endif
-      return 4;
+      return false;
     }
     else {
       _endSPI();
       #ifdef RUNDIAGNOSTIC
         _spifuncruntime = micros() - _spifuncruntime;
       #endif
-      return 5;
+      return true;
     }
   }
-  return 6;
+  return true;
 }
 
 // Writes a char of data to a specific location in a page.
