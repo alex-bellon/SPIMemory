@@ -137,7 +137,6 @@ bool SPIFlash::begin(uint32_t flashChipSize) {
 #else
   if (!_clockdiv) {
     _clockdiv = SPI_CLOCK_DIV2;
-    // TODO balex: relevant?
   }
 #endif
   bool retVal = _chipID(flashChipSize);

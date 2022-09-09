@@ -49,11 +49,10 @@
    #define BEGIN_SPI _spi->begin();
 
  #elif defined (__asr650x__)
-   #define CHIP_SELECT   digitalWrite(csPin, LOW);
-   #define CHIP_DESELECT digitalWrite(csPin, HIGH);
+   #define CHIP_SELECT   digitalWrite(GPIO4, LOW);
+   #define CHIP_DESELECT digitalWrite(GPIO4, HIGH);
    #define xfer(n) SPI.transfer(n);
-   //#define BEGIN_SPI SPI.begin(34, 33, 32, 35);
-   #define BEGIN_SPI SPI.begin();
+   #define BEGIN_SPI SPI.begin(SCK1, MISO1, MOSI1, GPIO4);
 
  // Defines and variables not specific to any architecture
  #else
