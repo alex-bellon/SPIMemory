@@ -107,7 +107,7 @@
      //Serial.println(_addr);
      #ifndef HIGHSPEED
        if(_isChipPoweredDown() || !_addressCheck(_addr, size) || !_notPrevWritten(_addr, size) || !_notBusy() || !_writeEnable()) {
-         // TODO balex: failing here 
+         // TODO balex: failing here
          return false;
        }
      #else
