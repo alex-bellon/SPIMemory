@@ -472,7 +472,7 @@ bool SPIFlash::writeByte(uint32_t _addr, uint8_t data, bool errorCheck) {
     _spifuncruntime = micros();
   #endif
 
-  if(!_prep(PAGEPROG, _addr, sizeof(data))) { // TODO balex: this is what is failing
+  if(!_prep(PAGEPROG, _addr, sizeof(data))) {
     return false;
   }
 
