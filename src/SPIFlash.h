@@ -52,7 +52,7 @@ public:
   #endif
   bool     libver(uint8_t *b1, uint8_t *b2, uint8_t *b3);
   bool     sfdpPresent(void);
-  uint8_t  error(bool verbosity = true);
+  uint8_t  error(bool verbosity = false);
   uint16_t getManID(void);
   uint32_t getJEDECID(void);
   uint64_t getUniqueID(void);
@@ -111,12 +111,15 @@ public:
   //uint32_t freeRAM(void);
 //#endif
   //------------------------------- Public variables ------------------------------------//
+  
+
+  void     _endSPI(void);
+  bool     _writeEnable(bool _troubleshootEnable = true);
 
 private:
   //------------------------------- Private functions -----------------------------------//
   unsigned _createMask(unsigned a, unsigned b);
   void     _troubleshoot(uint8_t _code, bool printoverride = false);
-  void     _endSPI(void);
   bool     _disableGlobalBlockProtect(void);
   bool     _isChipPoweredDown(void);
   bool     _prep(uint8_t opcode, uint32_t _addr, uint32_t size = 0);
@@ -125,7 +128,6 @@ private:
   bool     _noSuspend(void);
   bool     _notBusy(uint32_t timeout = BUSY_TIMEOUT);
   bool     _notPrevWritten(uint32_t _addr, uint32_t size = 1);
-  bool     _writeEnable(bool _troubleshootEnable = true);
   bool     _writeDisable(void);
   bool     _getJedecId(void);
   bool     _getManId(uint8_t *b1, uint8_t *b2);
